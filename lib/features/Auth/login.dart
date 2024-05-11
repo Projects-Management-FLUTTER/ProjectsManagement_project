@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:managementp_projects/core/Domain/Model/AuthModel/LoginModel.dart';
 import 'package:managementp_projects/core/colors.dart';
 import 'package:managementp_projects/core/components/defaultButton.dart';
 import 'package:managementp_projects/features/Auth/bloc/auth_bloc.dart';
+import 'package:managementp_projects/features/bloc/app_bloc.dart';
 
 class Login extends StatelessWidget {
   const Login({super.key});
@@ -124,12 +127,37 @@ class Login extends StatelessWidget {
                   height: 96,
                 ),
                 //---------------------------------------------------------------------------
-                InkWell(
-                  onTap: () {
-                    context.read<AuthBloc>().add(
-                        LoginData(email: email.text, password: password.text));
+                BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    if (state is Success_auth) {
+                      context.read<AppBloc>().add(LoggedIn());
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        'Login successfully',
+                        style: TextStyle(
+                          color: AppColor.main_color,
+                          fontFamily: 'Inter',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      showCloseIcon: true,
+                      closeIconColor: AppColor.main_color,
+                      backgroundColor: Color.fromRGBO(217, 217, 217, 20),
+                    ));
+
+                    context.go('create_join');
                   },
-                  child: ButtonComponent(text: "Login"),
+                  child: InkWell(
+                    onTap: () {
+                      context.read<AuthBloc>().add(LoginData(
+                          login: LoginModel(
+                              email: email.text, password: password.text)));
+                    },
+                    child: ButtonComponent(text: "Login"),
+                  ),
                 ),
                 //---------------------------------------------------------------------------------
                 SizedBox(
@@ -148,7 +176,9 @@ class Login extends StatelessWidget {
                       ),
                     ),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          context.go('/SignUp');
+                        },
                         child: Text(
                           'Sign Up',
                           style: TextStyle(

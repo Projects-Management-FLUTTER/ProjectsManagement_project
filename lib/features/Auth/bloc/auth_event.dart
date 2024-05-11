@@ -1,26 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'auth_bloc.dart';
 
 @immutable
 sealed class AuthEvent {}
 
 class RegisterData extends AuthEvent {
-  String first_name;
-  String last_name;
-  String email;
-  String password;
+  SignUpModel auth;
   RegisterData({
-    required this.first_name,
-    required this.last_name,
-    required this.email,
-    required this.password,
+    required this.auth,
   });
 }
 
 class LoginData extends AuthEvent {
-  String email;
-  String password;
+  LoginModel login;
   LoginData({
-    required this.email,
-    required this.password,
+    required this.login,
   });
 }

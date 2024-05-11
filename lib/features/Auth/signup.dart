@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:managementp_projects/core/Domain/Model/AuthModel/SignUpModel.dart';
 import 'package:managementp_projects/core/colors.dart';
 import 'package:managementp_projects/core/components/defaultButton.dart';
 import 'package:managementp_projects/features/Auth/bloc/auth_bloc.dart';
+import 'package:managementp_projects/features/bloc/app_bloc.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
@@ -182,15 +185,40 @@ class SignUp extends StatelessWidget {
                       SizedBox(
                         height: 40,
                       ),
-                      InkWell(
-                          onTap: () {
-                            context.read<AuthBloc>().add(RegisterData(
-                                first_name: first_name.text,
-                                last_name: last_name.text,
-                                email: email.text,
-                                password: password.text));
-                          },
-                          child: ButtonComponent(text: "Sign Up")),
+                      BlocListener<AuthBloc, AuthState>(
+                        listener: (context, state) {
+                          if (state is Success_auth) {
+                            context.read<AppBloc>().add(SigendUp());
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                              'successfully registered',
+                              style: TextStyle(
+                                color: AppColor.main_color,
+                                fontFamily: 'Inter',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            showCloseIcon: true,
+                            closeIconColor: AppColor.main_color,
+                            backgroundColor: Color.fromRGBO(217, 217, 217, 20),
+                          ));
+                          context.go('create_join');
+                        },
+                        child: InkWell(
+                            onTap: () {
+                              context.read<AuthBloc>().add(RegisterData(
+                                  auth: SignUpModel(
+                                      firstName: first_name.text,
+                                      lastName: last_name.text,
+                                      email: email.text,
+                                      password: password.text,
+                                      role: "USER")));
+                            },
+                            child: ButtonComponent(text: "Sign Up")),
+                      ),
                       SizedBox(
                         height: 25,
                       ),
@@ -207,7 +235,26 @@ class SignUp extends StatelessWidget {
                             ),
                           ),
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                context.go('/');
+                                // ScaffoldMessenger.of(context)
+                                //     .showSnackBar(SnackBar(
+                                //   content: Text(
+                                //     'successfully registered',
+                                //     style: TextStyle(
+                                //       color: AppColor.main_color,
+                                //       fontFamily: 'Inter',
+                                //       fontSize: 15,
+                                //       fontWeight: FontWeight.w400,
+                                //     ),
+                                //   ),
+                                //   behavior: SnackBarBehavior.floating,
+                                //   showCloseIcon: true,
+                                //   closeIconColor: AppColor.main_color,
+                                //   backgroundColor:
+                                //       Color.fromRGBO(217, 217, 217, 20),
+                                // ));
+                              },
                               child: Text(
                                 'Login',
                                 style: TextStyle(
